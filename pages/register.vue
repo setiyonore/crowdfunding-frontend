@@ -5,65 +5,64 @@
     ></div>
     <div class="w-auto md:w-2/4 lg:w-2/3 flex justify-center items-center">
       <div class="w-full lg:w-1/2 px-10 lg:px-0">
-        <h2 class="font-normal mb-6 text-3xl text-white">
-          Sign Up Account
-        </h2>
+        <h2 class="font-normal mb-6 text-3xl text-white">Sign Up Account</h2>
         <div class="mb-6">
           <div class="mb-4">
             <label class="font-normal text-lg text-white block mb-3"
-            >Full Name</label
+              >Full Name</label
             >
             <input
               type="text"
+              v-model="register.name"
               class="auth-form focus:outline-none focus:bg-purple-hover focus:shadow-outline focus:border-purple-hover-stroke focus:text-gray-100"
               placeholder="Write Your Name Here"
-              value="Julia Keeva Hanna"
             />
           </div>
         </div>
         <div class="mb-6">
           <div class="mb-4">
             <label class="font-normal text-lg text-white block mb-3"
-            >Occupation</label
+              >Occupation</label
             >
             <input
               type="text"
+              v-model="register.occupation"
               class="auth-form focus:outline-none focus:bg-purple-hover focus:shadow-outline focus:border-purple-hover-stroke focus:text-gray-100"
               placeholder="Write your occupation here"
-              value="Graphic Designer"
             />
           </div>
         </div>
         <div class="mb-6">
           <div class="mb-4">
             <label class="font-normal text-lg text-white block mb-3"
-            >Email Address</label
+              >Email Address</label
             >
             <input
               type="email"
+              v-model="register.email"
               class="auth-form focus:outline-none focus:bg-purple-hover focus:shadow-outline focus:border-purple-hover-stroke focus:text-gray-100"
               placeholder="Write your email address here"
-              value="julia.keeva@gmail.com"
             />
           </div>
         </div>
         <div class="mb-6">
           <div class="mb-4">
             <label class="font-normal text-lg text-white block mb-3"
-            >Password</label
+              >Password</label
             >
             <input
               type="password"
+              v-model="register.password"
               class="auth-form focus:outline-none focus:bg-purple-hover focus:shadow-outline focus:border-purple-hover-stroke focus:text-gray-100"
               placeholder="Type your password here"
-              value="nasigorenglimaribbu"
+              @keyup.enter="userRegister"
             />
           </div>
         </div>
         <div class="mb-6">
           <div class="mb-4">
             <button
-              @click="$router.push({ path: '/upload' })"
+              @click="userRegister"
               class="block w-full bg-orange-button hover:bg-green-button text-white font-semibold px-6 py-4 text-lg rounded-full"
             >
               Continue Sign Up
@@ -74,7 +73,7 @@
           <p class="text-white text-md">
             Already have account?
             <nuxt-link to="/login" class="no-underline text-orange-button"
-            >Sign In</nuxt-link
+              >Sign In</nuxt-link
             >.
           </p>
         </div>
@@ -85,13 +84,36 @@
 
 <script>
 export default {
-  layout: 'auth'
+  layout: 'auth',
+  data() {
+    return {
+      register: {
+        name: '',
+        email: '',
+        occupation: '',
+        password: '',
+      },
+    }
+  },
+  methods: {
+    async userRegister() {
+      try {
+        let response = await this.$axios.post('api/v1/users', this.register)
+        console.log(response.data.data.token)
+        this.$auth
+          .setUserToken(response.data.data.token)
+          .then(() => this.$router.push({ path: '/upload' }))
+      } catch (error) {
+        console.log(error)
+      }
+    },
+  },
 }
 </script>
 
 <style scoped>
 .auth-background {
-  background-image: url("/sign-up-background.jpg");
+  background-image: url('/sign-up-background.jpg');
   background-position: center;
   background-size: cover;
 }
