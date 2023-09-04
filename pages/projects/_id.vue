@@ -162,6 +162,10 @@ export default {
         amount: 0,
         campaign_id: Number.parseInt(this.$route.params.id),
       },
+      updateTransactionValue: {
+        order_id: '',
+        transaction_status: 'settlement',
+      },
     }
   },
   methods: {
@@ -175,9 +179,27 @@ export default {
           this.transactions
         )
         window.location = response.data.data.payment_url
+        //bypass midtrans notification because project on local
+        let idTransaction = response.data.data.id
+        this.updateTransactionValue.order_id = String(idTransaction)
+        // let url = response.data.data.payment_url
+        // window.open(url, '_blank').focus()
+        this.updateTransaction()
         console.log(response)
+        console.log(updateTransaction)
       } catch (error) {
         console.log(error)
+      }
+    },
+    updateTransaction() {
+      try {
+        let response = this.$axios.post(
+          '/api/v1/transactions/notification/',
+          this.updateTransactionValue
+        )
+        console.log(response)
+      } catch (error) {
+        console.log(response)
       }
     },
   },
