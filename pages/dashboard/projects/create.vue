@@ -2,7 +2,7 @@
   <div class="project-page">
     <section class="dashboard-header pt-5">
       <div class="container mx-auto relative">
-        <Navbar/>
+        <Navbar />
       </div>
     </section>
     <section class="container mx-auto pt-8">
@@ -16,12 +16,12 @@
           <h3 class="text-2xl text-gray-900 mb-4">Create New Projects</h3>
         </div>
         <div class="w-1/4 text-right">
-          <a
-            href="/dashboard/detail.html"
+          <button
+            @click="save"
             class="bg-green-button hover:bg-green-button text-white font-bold px-4 py-1 rounded inline-flex items-center"
           >
             Save
-          </a>
+          </button>
         </div>
       </div>
       <div class="block mb-2">
@@ -41,6 +41,7 @@
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
                     placeholder="Contoh: Demi Gunpla Demi Istri"
+                    v-model="campaign.name"
                   />
                 </div>
                 <div class="w-full md:w-1/2 px-3">
@@ -53,6 +54,7 @@
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="number"
                     placeholder="Contoh: 200000"
+                    v-model.number="campaign.goal_amount"
                   />
                 </div>
                 <div class="w-full px-3">
@@ -65,6 +67,7 @@
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
                     placeholder="Deskripsi singkat mengenai projectmu"
+                    v-model="campaign.short_description"
                   />
                 </div>
                 <div class="w-full px-3">
@@ -77,6 +80,7 @@
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
                     placeholder="Contoh: Ayam, Nasi Goreng, Piring"
+                    v-model="campaign.perks"
                   />
                 </div>
                 <div class="w-full px-3">
@@ -89,6 +93,7 @@
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
                     placeholder="Isi deskripsi panjang untuk projectmu"
+                    v-model="campaign.description"
                   ></textarea>
                 </div>
               </div>
@@ -99,8 +104,38 @@
     </section>
     <div class="cta-clip -mt-20"></div>
     <section class="call-to-action bg-purple-progress pt-64 pb-10"></section>
-    <Footer/>
+    <Footer />
   </div>
 </template>
-<script setup>
+<script>
+export default {
+  middleware: 'auth',
+  data() {
+    return {
+      campaign: {
+        name: '',
+        short_description: '',
+        description: '',
+        goal_amount: 0,
+        perks: '',
+      },
+    }
+  },
+  methods: {
+    async save() {
+      try {
+        let response = await this.$axios.$post(
+          '/api/v1/campaigns',
+          this.campaign
+        )
+        this.$router.push({
+          name: 'dashboard-projects-id',
+          params: { id: response.data.id },
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+  },
+}
 </script>
