@@ -61,7 +61,14 @@
                 Rp.
                 {{ new Intl.NumberFormat().format(campaign.goal_amount) }}
                 &middot;
-                {{ (campaign.current_amount / campaign.goal_amount) * 100 }}%
+                {{
+                  Math.min(
+                    1000,
+                    Math.round(
+                      (campaign.current_amount / campaign.goal_amount) * 100
+                    )
+                  )
+                }}%
               </p>
               <p class="text-gray-700 text-base">
                 {{ campaign.short_description }}
@@ -89,7 +96,7 @@ export default {
     const campaigns = await $axios.$get(
       '/api/v1/campaigns?user_id=' + app.$auth.user.id
     )
-    return {campaigns}
+    return { campaigns }
   },
 }
 </script>

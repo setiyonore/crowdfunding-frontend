@@ -132,8 +132,13 @@
               <div class="flex progress-info">
                 <div>
                   {{
-                    (campaign.current_amount / campaign.goal_amount) * 100 + '%'
-                  }}
+                    Math.min(
+                      1000,
+                      Math.round(
+                        (campaign.current_amount / campaign.goal_amount) * 100
+                      )
+                    )
+                  }}%
                 </div>
                 <div class="ml-auto font-semibold">
                   Rp {{ new Intl.NumberFormat().format(campaign.goal_amount) }}
